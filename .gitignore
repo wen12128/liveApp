@@ -14,3 +14,20 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+/.tmp
+
+# Ignore other unneeded files.
+/config/database.yml
+doc/
+bower_components/
+boot/
+node_modules/
+*.swp
+*~
+assets_src/
+/.sass-cache
+/.project
+/.DS_Store
+/.sass-cache
+/.idea
+/.secret

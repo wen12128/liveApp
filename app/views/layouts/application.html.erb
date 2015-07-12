@@ -1,14 +1,110 @@
 <!DOCTYPE html>
-<html>
+<!--[if lte IE 9]><html class="lte9 no-js m" lang="zh-cmn-Hans"><![endif]-->
+<!--[if gt IE 9]><!--><html class="no-js m" lang="zh-cmn-Hans"><!--<![endif]-->
+<!--[if !IE]><!--><html lang="zh-cmn-Hans"><!--<![endif]-->
 <head>
-  <title>LiveWebapp</title>
-  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
-  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width,hight=device-hight,initial-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="renderer" content="webkit"/>
+  <meta name="HandheldFriendly" content="true"/>
+  <meta name="MobileOptimized" content="320"/>
+  <meta name="screen-orientation" content="portrait"/>
+  <meta name="x5-orientation" content="portrait"/>
+  <meta name="full-screen" content="yes"/>
+  <meta name="x5-fullscreen" content="true"/>
+  <meta name="browsermode" content="application"/>
+  <meta name="x5-page-mode" content="app"/>
+  <meta name="msapplication-tap-highlight" content="no"/>
+  <meta name="format-detection" content="telephone=no,email=no,address=no"/>
+  <!--<meta name="mobile-agent"content="format=[wml|xhtml|html5]; url=url">-->
+  <!--android-->
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="application-name" content="享自游">
+  <!--ios-->
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name='apple-touch-fullscreen' content='yes'/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="享自游"/>
+  <!--Windows8-->
+  <meta name="msapplication-TileColor" content="#000"/>
+  <meta name="msapplication-TileImage" content="assets/images/icon/57.png"/>
+  <!--智能广告条<meta name="apple-itunes-app" content="app-id=live123, app-argument=http://live.yofogo.com"/>-->
+
+  <meta name="keywords" content="机票，火车票，话费，酒店，彩票代购，享自游"/>
+  <meta name="description" content="机票，火车票，话费，酒店，彩票代购，享自游"/>
+  <meta name="robots" content="index,follow"/>
+  <title>享自游<%= full_title(yield(:title))%></title>
+
+  <%= stylesheet_link_tag "global", media: "all", "data-turbolinks-track" => true %>
+  <%= stylesheet_link_tag "mobile", media: "all", "data-turbolinks-track" => true %>
+  <%= stylesheet_link_tag "animate", media: "all", "data-turbolinks-track" => true %>
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald|Droid+Sans:400,700"/>
+  <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+  <!--android icon-->
+  <link rel="icon" sizes="72x72" href="assets/images/icon/72.png">
+  <!--ios icon-->
+  <link rel="apple-touch-icon-precomposed" href="assets/images/icon/57.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/images/icon/57.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/images/icon/114.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/images/icon/144.png" />
+  <link rel="apple-touch-icon-precomposed" sizes="180x180" href="assets/images/icon/180.png"/>
+  <!--ipad launch-->
+  <link rel="apple-touch-startup-image" href="assets/images/launch/320x480.png"/>
+  <link rel="apple-touch-startup-image" sizes="768x1004" href="assets/images/launch/768x1004.png" />
+  <link rel="apple-touch-startup-image" sizes="1536x2008" href="assets/images/launch/1536x2008.png" />
+  <link rel="apple-touch-startup-image" sizes="1024x748" href="assets/images/launch/1024x748.png" />
+  <link rel="apple-touch-startup-image" sizes="2048x1496" href="assets/images/launch/2048x1496.png" />
+  <!--iphone launch-->
+  <link rel="apple-touch-startup-image" sizes="320x480" href="assets/images/launch/320x480.png" />
+  <link rel="apple-touch-startup-image" sizes="640x960" href="assets/images/launch/640x960.png" />
+  <link rel="apple-touch-startup-image" sizes="640x1136" href="assets/images/launch/640x1136.png" />
+  <!--iphone6 launch-->
+  <link rel="apple-touch-startup-image" sizes="750×1294" href="assets/images/launch/768x1004.png" media="(device-width: 375px)"/>
+  <link rel="apple-touch-startup-image" sizes="1242×2148" href="assets/images/launch/1536x2008.png" media="(device-width: 414px)"/>
   <%= csrf_meta_tags %>
+  <%= render 'layouts/shim' %>
 </head>
 <body>
-
-<%= yield %>
-
+    <div class="mobile-width">
+      <%= render 'layouts/header' %>
+      <%= yield %>
+      <%= render 'layouts/footer' %>
+    </div>
+    <%= javascript_include_tag "sea", "data-turbolinks-track" => true %>
+    <script type="text/javascript">
+      seajs.config({
+        // 调试模式
+        debug: true,
+        // 文件编码
+        charset: 'utf-8',
+        // Sea.js 的基础路径
+        base: "http://live.yofogo.com/javascripts/",
+        alias: {
+          "zepto": "zepto.min.js"
+        },
+        // 路径配置
+        paths: {
+          'cscriptpath': 'https://live.yofogo.com/javascripts',
+          'vscriptpath': 'https://live.yofogo.com/vendor/javascripts'
+        },
+        // 变量配置
+        vars: {
+          'locale': 'zh-cn'
+        },
+        // 预加载项
+        preload: [
+          Function.prototype.bind ? '' : 'es5-safe',
+          this.JSON ? '' : 'json'
+        ],
+        // 映射配置
+        map: [
+          ['http://live.yofogo.com/', 'http://127.0.0.1:3000/'],
+          [ '.js', '-debug.js' ]
+        ]
+      });
+      seajs.use('zepto');
+    </script>
 </body>
 </html>
