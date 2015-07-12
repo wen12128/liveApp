@@ -4,9 +4,14 @@ module.exports = function (grunt) {
   // 载入使用到的通过NPM安装的模块
   require('time-grunt')(grunt);
   require('load-grunt-tasks')(grunt);//grunt.loadNpmTasks('grunt-contrib-compass');
+  // sea.js
+  var transport = require('grunt-cmd-transport');
+  var style = transport.style.init(grunt);
+  var text = transport.text.init(grunt);
+  var script = transport.script.init(grunt);
 
   var config = {
-    # app:'app/build',
+    // app:'app/build',
     app: require ('./bower.json').appPath || 'app/assets_src'
   };
   
@@ -15,8 +20,7 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
     shell: {
       startRailsServer : {
-        command : 'rails server',
-        options : {async : true}
+        command : 'rails server'
       }
     },
     yeoman: config,
@@ -25,7 +29,7 @@ module.exports = function (grunt) {
         files: [{
           dot: true,
           src: [
-            'tmp',
+            'tmp/stylesheets',
             '<%= pkg.dist %>/**/*',
             '!<%= pkg.dist %>/.git*'
           ]
@@ -34,7 +38,7 @@ module.exports = function (grunt) {
           //}
         }]     
       },
-      server: 'tmp'
+      server: 'tmp/stylesheets'
     },
     copy: {
       dist: {
@@ -60,28 +64,35 @@ module.exports = function (grunt) {
         expand: true,
         dot: true,
         cwd: '<%= pkg.src %>/stylesheets/',
-        dest: 'tmp/stylesheets/',
+        dest: '<%= pkg.dist %>/stylesheets/',
         src: '{,*/}*.css'
       }
     },
     compass: {                                   // task
-      dist: {                                    // target
-        options: {                               // target options
+      dist: {                                                 // target
+        options: {                                          // target options
           sassDir: '<%= pkg.src %>/sass',
           cssDir : 'tmp/stylesheets',
-          generatedImagesDir: 'tmp/images/generated',
-          imagesDir: '<%= pkg.src %>/images',
-          javascriptsDir: '<%= pkg.src %>/javascripts',
-          importPath: './bower_components',
-          httpImagesPath: '/images',
-          httpGeneratedImagesPath: '/images/generated',
-          httpFontsPath: '/stylesheets/fonts',
-          relativeAssets: false,
-          assetCacheBuster: false,
-          raw: 'Sass::Script::Number.precision = 10\n',
           assetCacheBuster: false
         }
       },
+      // dist: {                                    // target
+      //   options: {                               // target options
+      //     sassDir: '<%= pkg.src %>/sass',
+      //     cssDir : 'tmp/stylesheets',
+      //     generatedImagesDir: 'tmp/images/generated',
+      //     imagesDir: '<%= pkg.src %>/images',
+      //     javascriptsDir: '<%= pkg.src %>/javascripts',
+      //     importPath: './bower_components',
+      //     httpImagesPath: '/images',
+      //     httpGeneratedImagesPath: '/images/generated',
+      //     httpFontsPath: '/stylesheets/fonts',
+      //     relativeAssets: false,
+      //     assetCacheBuster: false,
+      //     raw: 'Sass::Script::Number.precision = 10\n'
+      //     //assetCacheBuster: false
+      //   }
+      // },
       sprite: {                                  // another target
         options: {
           sassDir: '<%= pkg.src %>/sass',
@@ -129,17 +140,17 @@ module.exports = function (grunt) {
         }]
       }
     },
-    filerev: {
+    rev: {
       dist: {
-        files: {
-          src: {
+        files: [{
+          src: [
             '<%= pkg.dist %>/javascripts/{,*/}*.js',
             '<%= pkg.dist %>/stylesheets/{,*/}*.css',
             '<%= pkg.dist %>/images/{,*/}*.*',
             '<%= pkg.dist %>/stylesheets/fonts/{,*/}*.*',
             '<%= pkg.dist %>/*.{ico,png}'
-          }
-        }
+          ]        
+        }]
       }
     },
     useminPrepare: {
@@ -217,33 +228,57 @@ module.exports = function (grunt) {
         }]
       }
     },
+    transport: {
+      options : {
+        paths : ['.'],
+        alias: '<%= pkg.spm.alias %>',
+        parsers : {
+          '.js' : [script.jsParser],
+          '.css' : [style.css2jsParser],
+          '.html' : [text.html2jsParser]
+        }
+      },
+      styles : {
+        options : {
+          idleading : '<%= pkg.dist %>/stylesheets/'
+        },
+        files : [
+          {
+            cwd : '<%= pkg.src %>/stylesheets/',
+            src : '**/*',
+            filter : 'isFile',
+            dest : '.tmp/stylesheets/'
+          }
+        ]
+      }
+    },
     concat: {
       options: {
         separator: ';'
       },
       dist: {
         expand: true,
-        cwd: '<%= pkg.src %>/javascripts/',
-        src: ['zepto.min.js', 'respond.min.js', 'excanvas.js'],
-        dest: '<%= pkg.dist %>/javajavascripts/core.min.js'
-      },
-      zepto: {
-        options: {
-          banner: '/* Zepto v1.0 - polyfill zepto detect event ajax form fx - zeptojs.com/license */\n',
-          dir: 'src/zepto/src/'
-        },
-        // polyfill zepto detect event ajax form fx
-        src: [
-          '<%= concat.zepto.options.dir %>polyfill.js',
-          '<%= concat.zepto.options.dir %>zepto.js',
-          '<%= concat.zepto.options.dir %>detect.js',
-          '<%= concat.zepto.options.dir %>event.js',
-          '<%= concat.zepto.options.dir %>ajax.js',
-          '<%= concat.zepto.options.dir %>form.js',
-          '<%= concat.zepto.options.dir %>fx.js'
-        ],
-        dest: '<%= pkg.dist %>/javajavascripts/zepto.js'
+        cwd: '<%= pkg.vendor %>/javascripts/',
+        src: ['zepto.min.js', 'gmu.min.js', 'respond.min.js', 'excanvas.js'],
+        dest: '<%= pkg.dist %>/javascripts/core.min.js'
       }
+      // zepto: {
+      //   options: {
+      //     banner: '/* Zepto v1.0 - polyfill zepto detect event ajax form fx - zeptojs.com/license */\n',
+      //     dir: 'src/zepto/src/'
+      //   },
+      //   // polyfill zepto detect event ajax form fx
+      //   src: [
+      //     '<%= concat.zepto.options.dir %>polyfill.js',
+      //     '<%= concat.zepto.options.dir %>zepto.js',
+      //     '<%= concat.zepto.options.dir %>detect.js',
+      //     '<%= concat.zepto.options.dir %>event.js',
+      //     '<%= concat.zepto.options.dir %>ajax.js',
+      //     '<%= concat.zepto.options.dir %>form.js',
+      //     '<%= concat.zepto.options.dir %>fx.js'
+      //   ],
+      //   dest: '<%= pkg.dist %>/javascripts/zepto.js'
+      // }
     },
     jshint: {
       options: {
@@ -253,7 +288,7 @@ module.exports = function (grunt) {
       files: [
         'Gruntfile.js',
         '<%= pkg.src %>/javascripts/{,*/}*.js',
-        '!<%= pkg.src %>/javascripts/vendor/*',
+        '!<%= pkg.src %>/javascripts/core.js',
         'spec/{,*/}*.js'
       ]
     },
@@ -270,14 +305,15 @@ module.exports = function (grunt) {
         expand: true,
         cwd: '<%= pkg.src %>/javascripts/',
         src: '*.js',
-        dest: '<%= pkg.dist %>/javajavascripts/'
+        dest: '<%= pkg.dist %>/javascripts/'
       }
     },
     wiredep: {
       app: {
         ignorePath: /^\/|\.\.\//,
         src: ['<%= pkg.pages %>/views/layouts/application.html.erb'],
-        exclude: ['bower_components/bootstrap-sass-official/assets/javajavascripts/bootstrap.js']
+        //exclude: ['bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js']
+        exclude: ['<%= pkg.vendor %>/javascripts/sea.js']
       },
       sass: {
         src: ['<%= pkg.src %>/sass/{,*/}*.{scss,sass}'],
@@ -302,7 +338,7 @@ module.exports = function (grunt) {
         tasks : ['wiredep']
       },
       js : {
-        files : ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+        files : ['<%= pkg.dist %>/scripts/{,*/}*.js'],
         tasks : ['newer:jshint:all'],
         options : {
           livereload : '<%= connect.options.livereload %>'
@@ -313,9 +349,7 @@ module.exports = function (grunt) {
         tasks : ['newer:jshint:test','test:watch']
       },
       compass: {
-        #files: ['<%= pkg.src %>/sass/*.scss'],
-        #tasks: ['compass']
-        files : ['<%= yeoman.app %>/stylesheets/{,*/}*.{scss,sass}'],
+        files : ['<%= pkg.src %>/stylesheets/{,*/}*.{scss,sass}'],
         tasks : ['compass:server', 'autoprefixer']
       },
       gruntfile : {
@@ -350,9 +384,9 @@ module.exports = function (grunt) {
           livereload : '<%= connect.options.livereload %>'
         },
         files: [
-          '<%= yeoman.pages %>/{,*/}*.html.erb',
+          '<%= pkg.pages %>/{,*/}*.html.erb',
           'tmp/stylesheets/{,*/}*.css',
-          '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+          '<%= pkg.src %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
       }
     },
@@ -487,12 +521,13 @@ module.exports = function (grunt) {
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',
+    //'transport',
     'concat',
     'copy:dist',
     'cssmin',
     'uglify',    
     'modernizr',
-    'filerev',
+    'rev',
     'usemin',
     'htmlmin'
   ]);  

@@ -1,5 +1,8 @@
 LiveWebapp::Application.routes.draw do
-  #root to:'static_pages#home'
+  resources :orders
+  resources :users
+
+  root to:'users#index'
   ##match '/', to: 'static_pages#home', via: 'get'
   #match '/help', to: 'static_pages#help', via: 'get'
   #match '/about', to: 'static_pages#about', via: 'get'
