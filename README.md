@@ -3,7 +3,7 @@
 This README would normally document whatever steps are necessary to get the
 application up and running.
 
-* rails + grunt ==> link[http://www.angularonrails.com/get-grunt-start-rails-server/?utm_source=tuicool]
+* rails + grunt ==> link(http://www.angularonrails.com/get-grunt-start-rails-server/?utm_source=tuicool)
 * compass + sass + gum + grunt + H5 + respond + seajs
 
 Things you may want to cover:
